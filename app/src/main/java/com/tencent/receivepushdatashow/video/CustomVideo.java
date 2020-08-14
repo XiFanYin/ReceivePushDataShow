@@ -27,19 +27,6 @@ public class CustomVideo extends StandardGSYVideoPlayer {
     }
 
 
-    @Override
-    protected void init(Context context) {
-        super.init(context);
-        initView();
-
-    }
-
-
-    private void initView() {
-
-
-    }
-
     //自定义布局
     @Override
     public int getLayoutId() {
@@ -66,6 +53,9 @@ public class CustomVideo extends StandardGSYVideoPlayer {
         //super.touchDoubleUp();
         //不需要双击暂停
     }
+
+
+
 
 
 }

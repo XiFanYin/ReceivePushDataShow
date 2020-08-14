@@ -1,5 +1,6 @@
 package com.tencent.receivepushdatashow.video
 
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.widget.ImageView
 import com.shuyu.gsyvideoplayer.GSYVideoManager
@@ -7,6 +8,7 @@ import com.shuyu.gsyvideoplayer.utils.GSYVideoType
 import com.tencent.receivepushdatashow.R
 import com.tencent.receivepushdatashow.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_video.*
+
 
 class VideoFragment : BaseFragment() {
 
@@ -24,26 +26,31 @@ class VideoFragment : BaseFragment() {
 
 
 
-
-
     override fun getLayoutId() = R.layout.fragment_video
 
     override fun initListener() {
-        val source1 = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4"
-        video_player.setUp(source1, true, "测试视频")
-        //增加封面
+        //清理缓存
+        GSYVideoManager.instance().clearAllDefaultCache(mActivity)
+
+        val source1 = "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=207536&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss"
+        //设置视频第一帧变成封面
+        val media = MediaMetadataRetriever()
+        media.setDataSource(source1,HashMap())
+        val frameAtTime = media.getFrameAtTime()
         val imageView = ImageView(mActivity)
         imageView.scaleType = ImageView.ScaleType.FIT_XY
-        imageView.setImageResource(R.mipmap.ic_launcher)
+        imageView.setImageBitmap(frameAtTime)
         video_player.setThumbImageView(imageView)
-
+        //设置视频
+        video_player.setUp(source1, true, "测试视频")
+        //设置拉伸全屏
         GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL)
         //是否可以滑动调整
         video_player.setIsTouchWiget(true)
+        //设置循环播放
+        video_player.isLooping = true
         //开始播放
         video_player.startPlayLogic()
-        video_player.isLooping = true
-
 
 
 
