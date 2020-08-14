@@ -23,7 +23,6 @@ public class CustomVideo extends StandardGSYVideoPlayer {
     public CustomVideo(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-
     }
 
 

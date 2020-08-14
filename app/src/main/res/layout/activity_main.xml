@@ -7,4 +7,43 @@
     tools:context=".MainActivity">
 
 
+
+
+
+    <com.youth.banner.Banner
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <com.tencent.receivepushdatashow.video.CustomVideo
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/pushImage"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="模拟图片推送"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/pushvideo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="模拟视频推送"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
 </FrameLayout>
