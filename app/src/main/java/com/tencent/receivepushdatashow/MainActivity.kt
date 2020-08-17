@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     //创建视频播放器
     lateinit var videoView: CustomVideo
 
-    private var mCurPos = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity() {
                 "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=207536&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
                 "这是一个视频",
                 "http://img.kaiyanapp.com/86eb064764210ae5df100284aa40920f.png?imageMogr2/quality/60/format/jpg"
+            ),
+            ResultData(
+                Type.VIDEO,
+                "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=198308&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
+                "这是一个视频",
+                "http://img.kaiyanapp.com/5046e6f8e43e66cbeec1d73dfd7025af.png?imageMogr2/quality/60/format/jpg"
             )
         )
         //创建adapter
@@ -61,22 +67,29 @@ class MainActivity : AppCompatActivity() {
 
         layoutManager.setOnViewPagerListener(object : OnViewPagerListener {
             override fun onInitComplete() {
-                //说明第一个是视频
+            // 如果第一个是视频
+
+
             }
 
             override fun onPageRelease(isNext: Boolean, position: Int, view: View?) {
-
                 if (menuadapter.getItemViewType(position) == R.layout.item_video) {
                     GSYVideoManager.releaseAllVideos()
-                    val parent: ViewParent = videoView.getParent()
-                    if (parent is FrameLayout) {
+                    val parent: ViewParent? = videoView.getParent()
+                    if (parent != null && parent is FrameLayout) {
                         parent.removeView(videoView)
                     }
                 }
             }
 
             override fun onPageSelected(position: Int, isBottom: Boolean, view: View?) {
-                if (mCurPos!=position &&menuadapter.getItemViewType(position) == R.layout.item_video) {
+                if ( menuadapter.getItemViewType(position) == R.layout.item_video) {
+                    GSYVideoManager.releaseAllVideos()
+                    val parent: ViewParent? = videoView.getParent()
+                    if (parent != null && parent is FrameLayout) {
+                        parent.removeView(videoView)
+                    }
+
                     videoView.setUp(pushData.get(position % pushData.size).url, true, "")
                     videoView.startPlayLogic()
                     videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
@@ -87,7 +100,6 @@ class MainActivity : AppCompatActivity() {
                     })
                 }
 
-                mCurPos = position
             }
         })
 
