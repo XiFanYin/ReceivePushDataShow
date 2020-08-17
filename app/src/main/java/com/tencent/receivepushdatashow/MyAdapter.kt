@@ -1,12 +1,9 @@
 package com.tencent.receivepushdatashow
 
 import android.content.Context
-import android.util.Log
-import android.widget.FrameLayout
 import com.bumptech.glide.Glide
 import com.ehealth.machine.base.adapter.BaseAdapter
 import com.ehealth.machine.base.adapter.CommonViewHolder
-import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType
 import com.tencent.receivepushdatashow.video.CustomVideo
 
@@ -20,7 +17,7 @@ class MyAdapter(context: Context, data: MutableList<ResultData>) :
     }) {
 
 
-    val videoView:CustomVideo
+    val videoView: CustomVideo
 
     init {
          videoView = CustomVideo(mContext)
