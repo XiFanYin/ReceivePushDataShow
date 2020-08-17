@@ -5,7 +5,7 @@ import android.view.View;
 public interface  OnViewPagerListener {
 
     /*初始化完成*/
-    void onInitComplete();
+    void onInitComplete(View view);
 
     /*释放的监听*/
     void onPageRelease(boolean isNext,int position,View view);

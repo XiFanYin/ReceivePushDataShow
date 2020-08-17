@@ -32,26 +32,28 @@ class MainActivity : AppCompatActivity() {
         //模拟数据
         pushData = arrayListOf(
             ResultData(
-                Type.IMAGE,
-                "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1920121267,3981894473&fm=26&gp=0.jpg",
-                "这是一个图片"
-            ),
-            ResultData(
-                Type.IMAGE,
-                "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1659012856,346800732&fm=26&gp=0.jpg",
-                "这是一个图片"
-            ),
-            ResultData(
                 Type.VIDEO,
                 "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=207536&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
                 "这是一个视频",
                 "http://img.kaiyanapp.com/86eb064764210ae5df100284aa40920f.png?imageMogr2/quality/60/format/jpg"
             ),
             ResultData(
+                Type.IMAGE,
+                "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1920121267,3981894473&fm=26&gp=0.jpg",
+                "这是一个图片"
+            ),
+
+            ResultData(
                 Type.VIDEO,
                 "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=198308&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
                 "这是一个视频",
                 "http://img.kaiyanapp.com/5046e6f8e43e66cbeec1d73dfd7025af.png?imageMogr2/quality/60/format/jpg"
+            ),
+
+            ResultData(
+                Type.IMAGE,
+                "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1659012856,346800732&fm=26&gp=0.jpg",
+                "这是一个图片"
             )
         )
         //创建adapter
@@ -66,9 +68,23 @@ class MainActivity : AppCompatActivity() {
         videoView.setIsTouchWiget(false)
 
         layoutManager.setOnViewPagerListener(object : OnViewPagerListener {
-            override fun onInitComplete() {
+            override fun onInitComplete(view: View?) {
                 // 如果第一个是视频
+                if (menuadapter.getItemViewType(0) == R.layout.item_video) {
+                    val url = pushData.get(0).url
+                    //记录当前播放地址
+                    currentVideoUrl = url
+                    //播放视频
+                    videoView.setUp(url, true, "")
+                    videoView.startPlayLogic()
+                    //设置视频监听
+                    videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
+                        override fun onPrepared(url: String?, vararg objects: Any?) {
+                            (view as ViewGroup).addView(videoView)
+                        }
 
+                    })
+                }
 
             }
 
