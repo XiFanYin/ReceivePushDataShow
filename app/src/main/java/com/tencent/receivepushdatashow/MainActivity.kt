@@ -1,21 +1,18 @@
 package com.tencent.receivepushdatashow
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
+import android.view.ViewGroup
+import android.view.ViewParent
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType
-import com.tencent.receivepushdatashow.image.GlideImageLoader
-import com.youth.banner.BannerConfig
-import com.youth.banner.Transformer
+import com.tencent.receivepushdatashow.video.CustomVideo
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_image.banner
-import kotlinx.android.synthetic.main.fragment_video.video_player
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,11 +21,15 @@ class MainActivity : AppCompatActivity() {
     //模拟推送过来的数据
     lateinit var pushData: ArrayList<ResultData>
 
+    //创建视频播放器
+    lateinit var videoView: CustomVideo
+
+    private var mCurPos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        //模拟数据
         pushData = arrayListOf(
             ResultData(
                 Type.IMAGE,
@@ -43,23 +44,81 @@ class MainActivity : AppCompatActivity() {
             ResultData(
                 Type.VIDEO,
                 "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=207536&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
-                "这是一个视频"
-            ),
-            ResultData(
-                Type.TEXT,
-                "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=207536&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
-                "这是一个富文本"
+                "这是一个视频",
+                "http://img.kaiyanapp.com/86eb064764210ae5df100284aa40920f.png?imageMogr2/quality/60/format/jpg"
             )
         )
-
-        PagerSnapHelper().attachToRecyclerView(mRecyclerView)
+        //创建adapter
         val menuadapter = MyAdapter(this, pushData)
-        mRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        val layoutManager = SmoothLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        mRecyclerView.layoutManager = layoutManager
         mRecyclerView.adapter = menuadapter
-        // TODO 1设置无线轮播，2视频播放完成后再去轮播，3.附文本跑马灯，4新来的推送数据，如何做到偷偷改变，5页面滚动，如果当前是视频，停止播放视频
+
+        //创建视频播放器
+        videoView = CustomVideo(this)
+        GSYVideoType.setShowType(GSYVideoType.SCREEN_MATCH_FULL)
+        videoView.setIsTouchWiget(false)
+
+        layoutManager.setOnViewPagerListener(object : OnViewPagerListener {
+            override fun onInitComplete() {
+                //说明第一个是视频
+            }
+
+            override fun onPageRelease(isNext: Boolean, position: Int, view: View?) {
+
+                if (menuadapter.getItemViewType(position) == R.layout.item_video) {
+                    GSYVideoManager.releaseAllVideos()
+                    val parent: ViewParent = videoView.getParent()
+                    if (parent is FrameLayout) {
+                        parent.removeView(videoView)
+                    }
+                }
+            }
+
+            override fun onPageSelected(position: Int, isBottom: Boolean, view: View?) {
+                if (mCurPos!=position &&menuadapter.getItemViewType(position) == R.layout.item_video) {
+                    videoView.setUp(pushData.get(position % pushData.size).url, true, "")
+                    videoView.startPlayLogic()
+                    videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
+                        override fun onPrepared(url: String?, vararg objects: Any?) {
+                            (view as ViewGroup).addView(videoView)
+                        }
+
+                    })
+                }
+
+                mCurPos = position
+            }
+        })
+
+        //设置每隔几秒执行一次
+//        val scheduledExecutorService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+//        scheduledExecutorService.scheduleAtFixedRate( {
+//            mRecyclerView.smoothScrollToPosition(
+//                layoutManager.findFirstVisibleItemPosition() + 1
+//            )
+//        }, 2000, 2000, TimeUnit.MILLISECONDS)
+//
 
 
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        videoView.onVideoPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        GSYVideoManager.releaseAllVideos()
+
+    }
+
+    override fun onBackPressed() {
+        //释放所有
+        videoView.setVideoAllCallBack(null)
+        super.onBackPressed()
     }
 
 
