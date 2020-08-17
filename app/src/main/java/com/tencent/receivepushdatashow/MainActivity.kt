@@ -1,6 +1,9 @@
 package com.tencent.receivepushdatashow
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
@@ -22,8 +25,22 @@ class MainActivity : AppCompatActivity() {
 
     //创建视频播放器
     lateinit var videoView: CustomVideo
-
+    //当前播放的视频地址
     private var currentVideoUrl = ""
+    //布局管理器
+    private  lateinit var  layoutManager :SmoothLinearLayoutManager
+
+    //创建主线程handler消息
+    private val mHandler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            mRecyclerView.smoothScrollToPosition(
+                layoutManager.findFirstVisibleItemPosition() + 1
+            )
+
+
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         )
         //创建adapter
         val menuadapter = MyAdapter(this, pushData)
-        val layoutManager = SmoothLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        layoutManager = SmoothLinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         mRecyclerView.layoutManager = layoutManager
         mRecyclerView.adapter = menuadapter
 
@@ -81,8 +98,10 @@ class MainActivity : AppCompatActivity() {
                         override fun onPrepared(url: String?, vararg objects: Any?) {
                             (view as ViewGroup).addView(videoView)
                         }
-
                     })
+                }else{
+
+
                 }
 
             }

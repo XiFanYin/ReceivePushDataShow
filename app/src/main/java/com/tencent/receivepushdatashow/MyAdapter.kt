@@ -10,9 +10,8 @@ import com.tencent.receivepushdatashow.video.CustomVideo
 class MyAdapter(context: Context, data: MutableList<ResultData>) :
     BaseAdapter<ResultData>(context, data, {
         when (it.type) {
-            Type.IMAGE -> R.layout.itme_image
+            Type.IMAGE -> R.layout.item_image
             Type.VIDEO -> R.layout.item_video
-            Type.TEXT -> R.layout.itme_text
         }
     }) {
 
@@ -48,9 +47,7 @@ class MyAdapter(context: Context, data: MutableList<ResultData>) :
 
             }
 
-            Type.TEXT -> {
-                holder.setText(R.id.textview,data.description)
-            }
+
         }
     }
 }
