@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     //创建视频播放器
     lateinit var videoView: CustomVideo
 
-
+    private var currentVideoUrl = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,37 +67,44 @@ class MainActivity : AppCompatActivity() {
 
         layoutManager.setOnViewPagerListener(object : OnViewPagerListener {
             override fun onInitComplete() {
-            // 如果第一个是视频
+                // 如果第一个是视频
 
 
             }
 
             override fun onPageRelease(isNext: Boolean, position: Int, view: View?) {
-                if (menuadapter.getItemViewType(position) == R.layout.item_video) {
-                    GSYVideoManager.releaseAllVideos()
-                    val parent: ViewParent? = videoView.getParent()
-                    if (parent != null && parent is FrameLayout) {
-                        parent.removeView(videoView)
-                    }
-                }
+
             }
 
             override fun onPageSelected(position: Int, isBottom: Boolean, view: View?) {
-                if ( menuadapter.getItemViewType(position) == R.layout.item_video) {
+                val url = pushData.get(position % pushData.size).url
+                //移动父布局重复
+                if (menuadapter.getItemViewType(position) == R.layout.item_video && currentVideoUrl != url) {
                     GSYVideoManager.releaseAllVideos()
                     val parent: ViewParent? = videoView.getParent()
                     if (parent != null && parent is FrameLayout) {
                         parent.removeView(videoView)
                     }
+                    //记录当前播放地址
+                    currentVideoUrl = url
+                    //播放视频
+                    videoView.setUp(url, true, "")
 
-                    videoView.setUp(pushData.get(position % pushData.size).url, true, "")
                     videoView.startPlayLogic()
+                    //设置视频监听
                     videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
                         override fun onPrepared(url: String?, vararg objects: Any?) {
                             (view as ViewGroup).addView(videoView)
                         }
 
                     })
+                } else {
+                    //如果当前页面显示的是图片，但是视频还在播放就停止播放视频
+                    if (menuadapter.getItemViewType(position) != R.layout.item_video && videoView.isInPlayingState) {
+                        GSYVideoManager.releaseAllVideos()
+                        currentVideoUrl = ""
+                    }
+
                 }
 
             }
