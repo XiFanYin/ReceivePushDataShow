@@ -18,17 +18,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
-
+    //图片显示时间
+    val ImageDelayed = 10000L
 
     //模拟推送过来的数据
     lateinit var pushData: ArrayList<ResultData>
 
     //创建视频播放器
     lateinit var videoView: CustomVideo
-    //当前播放的视频地址
-    private var currentVideoUrl = ""
+
+
     //布局管理器
-    private  lateinit var  layoutManager :SmoothLinearLayoutManager
+    private lateinit var layoutManager: SmoothLinearLayoutManager
 
     //创建主线程handler消息
     private val mHandler = object : Handler(Looper.getMainLooper()) {
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
             mRecyclerView.smoothScrollToPosition(
                 layoutManager.findFirstVisibleItemPosition() + 1
             )
-
 
 
         }
@@ -88,20 +88,27 @@ class MainActivity : AppCompatActivity() {
                 // 如果第一个是视频
                 if (menuadapter.getItemViewType(0) == R.layout.item_video) {
                     val url = pushData.get(0).url
-                    //记录当前播放地址
-                    currentVideoUrl = url
                     //播放视频
                     videoView.setUp(url, true, "")
                     videoView.startPlayLogic()
                     //设置视频监听
                     videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
                         override fun onPrepared(url: String?, vararg objects: Any?) {
+                            mHandler.sendEmptyMessageDelayed(100, GSYVideoManager.instance().duration)
                             (view as ViewGroup).addView(videoView)
                         }
+
+                        override fun onAutoComplete(url: String?, vararg objects: Any?) {
+                            //播放完成移除，防止黑屏
+                            val parent: ViewParent? = videoView.getParent()
+                            if (parent != null && parent is FrameLayout) {
+                                parent.removeView(videoView)
+                            }
+                        }
+
                     })
-                }else{
-
-
+                } else {
+                    mHandler.sendEmptyMessageDelayed(200, ImageDelayed)
                 }
 
             }
@@ -113,48 +120,51 @@ class MainActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int, isBottom: Boolean, view: View?) {
                 val url = pushData.get(position % pushData.size).url
                 //移动父布局重复
-                if (menuadapter.getItemViewType(position) == R.layout.item_video && currentVideoUrl != url) {
+                if (menuadapter.getItemViewType(position) == R.layout.item_video) {
                     GSYVideoManager.releaseAllVideos()
                     val parent: ViewParent? = videoView.getParent()
                     if (parent != null && parent is FrameLayout) {
                         parent.removeView(videoView)
                     }
-                    //记录当前播放地址
-                    currentVideoUrl = url
                     //播放视频
                     videoView.setUp(url, true, "")
-
                     videoView.startPlayLogic()
                     //设置视频监听
                     videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
                         override fun onPrepared(url: String?, vararg objects: Any?) {
+                            mHandler.removeCallbacksAndMessages(null)
+                            mHandler.sendEmptyMessageDelayed(100, GSYVideoManager.instance().duration)
                             (view as ViewGroup).addView(videoView)
+                        }
+                        override fun onAutoComplete(url: String?, vararg objects: Any?) {
+                            //播放完成移除，防止黑屏
+                            val parent: ViewParent? = videoView.getParent()
+                            if (parent != null && parent is FrameLayout) {
+                                parent.removeView(videoView)
+                            }
                         }
 
                     })
                 } else {
                     //如果当前页面显示的是图片，但是视频还在播放就停止播放视频
-                    if (menuadapter.getItemViewType(position) != R.layout.item_video && videoView.isInPlayingState) {
+                    if ( videoView.isInPlayingState) {
                         GSYVideoManager.releaseAllVideos()
-                        currentVideoUrl = ""
                     }
-
+                    mHandler.removeCallbacksAndMessages(null)
+                    mHandler.sendEmptyMessageDelayed(200, ImageDelayed)
                 }
 
             }
         })
 
-        //设置每隔几秒执行一次
-//        val scheduledExecutorService: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
-//        scheduledExecutorService.scheduleAtFixedRate( {
-//            mRecyclerView.smoothScrollToPosition(
-//                layoutManager.findFirstVisibleItemPosition() + 1
-//            )
-//        }, 2000, 2000, TimeUnit.MILLISECONDS)
-//
-
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        videoView.onVideoResume()
+    }
+
 
 
     override fun onPause() {
