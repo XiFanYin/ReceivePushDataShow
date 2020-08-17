@@ -96,7 +96,7 @@ public class SmoothLinearLayoutManager extends LinearLayoutManager implements Re
 
     @Override
     public void onChildViewAttachedToWindow(@NonNull View view) {
-        if (mOnViewPagerListener != null && getChildCount() == 1) {
+        if (mOnViewPagerListener != null) {
             mOnViewPagerListener.onInitComplete(view);
         }
     }
