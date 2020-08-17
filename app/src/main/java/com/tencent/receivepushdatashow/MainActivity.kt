@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                     //设置视频监听
                     videoView.setVideoAllCallBack(object : GSYSampleCallBack() {
                         override fun onPrepared(url: String?, vararg objects: Any?) {
-                            mHandler.removeCallbacksAndMessages(null)
+//                            mHandler.removeCallbacksAndMessages(null)
                             mHandler.sendEmptyMessageDelayed(100, GSYVideoManager.instance().duration)
                             (view as ViewGroup).addView(videoView)
                         }
@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                     if ( videoView.isInPlayingState) {
                         GSYVideoManager.releaseAllVideos()
                     }
-                    mHandler.removeCallbacksAndMessages(null)
+//                    mHandler.removeCallbacksAndMessages(null)
                     mHandler.sendEmptyMessageDelayed(200, ImageDelayed)
                 }
 

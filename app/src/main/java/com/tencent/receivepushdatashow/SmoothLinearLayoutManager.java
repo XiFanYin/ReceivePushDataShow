@@ -49,7 +49,7 @@ public class SmoothLinearLayoutManager extends LinearLayoutManager implements Re
             case RecyclerView.SCROLL_STATE_IDLE:
                 View viewIdle = mPagerSnapHelper.findSnapView(this);
                 int positionIdle = getPosition(viewIdle);
-                if (mOnViewPagerListener != null && getChildCount() == 1) {
+                if (mOnViewPagerListener != null ) {
                     mOnViewPagerListener.onPageSelected(positionIdle,positionIdle == getItemCount() - 1,viewIdle);
                 }
                 break;
