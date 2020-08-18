@@ -35,6 +35,18 @@ class MainActivity : AppCompatActivity() {
             Type.IMAGE,
             "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1920121267,3981894473&fm=26&gp=0.jpg",
             "这是一个图片"
+        ),
+        ResultData(
+            Type.VIDEO,
+            "http://baobab.kaiyanapp.com/api/v1/playUrl?vid=198308&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss",
+            "这是一个视频",
+            "http://img.kaiyanapp.com/5046e6f8e43e66cbeec1d73dfd7025af.png?imageMogr2/quality/60/format/jpg"
+        ),
+
+        ResultData(
+            Type.IMAGE,
+            "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1659012856,346800732&fm=26&gp=0.jpg",
+            "这是一个图片"
         )
 
 
