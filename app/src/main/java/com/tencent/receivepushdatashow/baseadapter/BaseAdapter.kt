@@ -67,8 +67,23 @@ abstract class BaseAdapter<DATA> : RecyclerView.Adapter<CommonViewHolder> {
 
     override fun getItemCount(): Int {
         //如果就一个item就不滑动了
-        return if (mDatas.size < 2) 1 else Int.MAX_VALUE
+        return  Int.MAX_VALUE
     }
+
+
+    /**
+     * 设置新数据
+     */
+    fun setNewData(mDatas: MutableList<DATA>) {
+        this.mDatas = mDatas
+        notifyDataSetChanged()
+    }
+
+
+    /**
+     * 获取列表数据
+     */
+    fun getmDatas()  = mDatas
 
 
     override fun getItemViewType(position: Int): Int {
