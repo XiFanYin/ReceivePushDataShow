@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseAdapter<DATA> : RecyclerView.Adapter<CommonViewHolder> {
 
     /*上下文*/
-    var mContext: Context
+    val mContext: Context
 
     /*单条目布局*/
     private var mLayoutId: Int

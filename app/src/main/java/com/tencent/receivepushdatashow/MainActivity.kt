@@ -231,12 +231,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        mHandler.removeCallbacksAndMessages(null)
         GSYVideoManager.releaseAllVideos()
 
     }
 
     override fun onBackPressed() {
+        Log.e("rrrrrrrrrr","onBackPressed")
+
         //释放所有
+        mHandler.removeCallbacksAndMessages(null)
         videoView.setVideoAllCallBack(null)
         super.onBackPressed()
     }
